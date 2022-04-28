@@ -38,16 +38,18 @@
 struct Course {
 	std::string term;
 	std::string section;
+	Course(std::string term, std::string section) : term(term), section(section) {}
 };
 
 struct Student {
 	std::string id;
+	Student(std::string id) : id(id) {}
 };
 
 // to represent the relationship between course and list of students and their grades
 struct Roster {
 	Course course;
-	std::vector <std::vector <Student, std::string>> studentsWithGrades;
+	std::vector <std::vector <Student, std::string> > studentsWithGrades;
 };
 
 struct Instructor {
@@ -82,6 +84,13 @@ int main() {
 		// for (const auto &str : cols) {
 		// 	std::cout << str << '\n';
 		// }
+		Student student (cols.at(0));
+		Course course (cols.at(3), cols.at(4));
+
+		// create rosters & instructors
+
+		// temp test
+		//std::cout << course.term << '\n';
 
 		
 		// call functions to create objects in memory through instantiating struct
