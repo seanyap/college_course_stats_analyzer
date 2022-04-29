@@ -38,6 +38,7 @@
 struct Course {
 	std::string term;
 	std::string section;
+	Course() {}
 	Course(std::string term, std::string section) : term(term), section(section) {}
 };
 
@@ -49,13 +50,19 @@ struct Student {
 // to represent the relationship between course and list of students and their grades
 struct Roster {
 	Course course;
-	std::vector <std::vector <Student, std::string> > studentsWithGrades;
+	// std::vector <std::vector <Student, std::string> > studentsWithGrades;
+
+	Roster() {}
+	Roster(Course course) : course(course) {}
 };
 
 struct Instructor {
 	std::string id;
 	// each roster represents a course instructor taught 
 	std::vector <Roster> rosters;
+	
+	Instructor() {}
+	Instructor(std::string id) : id(id) {}
 };
 
 std::vector <std::string> split(std::string &str, char delimiter) {
@@ -69,8 +76,17 @@ std::vector <std::string> split(std::string &str, char delimiter) {
 	return tokens;
 }
 
+bool hasInstructor(std::string target, std::vector <Instructor> &instructors) {
+	for (int i=0; i<instructors.size(); ++i) {
+		if (instructors[i].id ==  target) return true;
+	}
+	return false;
+}
+
 int main() {
 	std::ifstream data_1115 ("../data/1115.csv");
+
+	std::vector <Instructor> instructors;
 
 	// place below code into a reader wrapper
 	while (data_1115.good()) {
@@ -84,6 +100,20 @@ int main() {
 		// for (const auto &str : cols) {
 		// 	std::cout << str << '\n';
 		// }
+
+		// if current instructor don't exist 
+		if (!hasInstructor(cols.at(2), instructors)) {
+			// create instructor
+			Instructor instructor (cols.at(2));
+			instructors.push_back(instructor);
+			std::cout << "instructor created: " << cols.at(2) << '\n';
+			// todo create roster
+		}
+		// current instructor exist
+		else {
+			std::cout << "instructor exists: " << cols.at(2) << '\n';
+		}
+
 		Student student (cols.at(0));
 		Course course (cols.at(3), cols.at(4));
 
