@@ -41,10 +41,11 @@
 // why is string, vector, ifstream all in std namespace?
 
 struct Course {
+	std::string id;
 	std::string term;
 	std::string section;
 	Course() {}
-	Course(std::string term, std::string section) : term(term), section(section) {}
+	Course(std::string id, std::string term, std::string section) : id(id), term(term), section(section) {}
 };
 
 // omit Student struct for now because we only has 1 field
@@ -83,9 +84,17 @@ std::vector <std::string> split(std::string &str, char delimiter) {
 	return tokens;
 }
 
-bool hasInstructor(std::string target, std::vector <Instructor> &instructors) {
+int findInstructor(std::string target, std::vector <Instructor> &instructors) {
 	for (int i=0; i<instructors.size(); ++i) {
-		if (instructors[i].id ==  target) return true;
+		if (instructors[i].id ==  target) return i;
+	}
+	return -1;
+}
+
+bool hasCourse(std::vector <Report> reports, std::string courseID) {
+	for (auto const& report : reports) {
+		if (report.course.id == courseID)
+			return true;
 	}
 	return false;
 }
@@ -103,45 +112,69 @@ int main() {
 		
 		// split record into respective cols 
 		std::vector <std::string> cols (split(record, ','));
-		// check if cols are parsed correctly
-		// for (const auto &str : cols)
-		// 	std::cout << str << '\n';
+		std::string studentID (cols.at(0));	
+		std::string courseID (cols.at(1));
+		std::string instructorID (cols.at(2));
+		std::string termID (cols.at(3));
+		std::string sectionID(cols.at(4));
+		std::string studentGrade(cols.at(5));
+		
+		int instructorIdx = findInstructor(instructorID, instructors);
 
 		// if current instructor don't exist 
-		if (!hasInstructor(cols.at(2), instructors)) {
+		if (instructorIdx == -1) {
 			// create instructor
-			Instructor instructor (cols.at(2));
-			instructors.push_back(instructor);
+			Instructor instructor (instructorID);
 
 			// initialize student, course and report
-			std::string studentID (cols.at(1));
-			Course course (cols.at(3), cols.at(4));
+			
+			Course course (courseID, termID, sectionID);
 			Report report (course);
 
 			// add current student grade into report
-				report.studentGrades.insert(std::pair<std::string,std::string>(studentID, cols.at(5)));
+				report.studentGrades.insert(std::pair<std::string,std::string>(studentID, studentGrade));
 			// assign report to instructor
 			instructor.reports.push_back(report);
-			
-			// std::cout << "instructor created: " << instructor.id << '\n';
-
+			instructors.push_back(instructor);
 		}
 		// current instructor exist
 		else {
-			std::cout << "instructor exists: " << cols.at(2) << '\n';
+			// get instructor from memory
+			Instructor instructor = instructors.at(instructorIdx);
+			
+			// check if current student course exist in instructor
+			if (hasCourse(instructor.reports, courseID)) {
+				
+			}
+			// course doesn't exist, so has to create it
+			else {
+				
+			}
 		}
 
-		// create rosters & instructors
-
-		// temp test
-		//std::cout << course.term << '\n';
 
 		
-		// call functions to create objects in memory through instantiating struct
-		// who's responsible to keep track of these objects? main?
 
-		// 
+		
+		// who's responsible to keep track of struct objects? main?
+		// --> main keeps track of the list of instructors which
+		//		will connect to all the other objects 
 		
 	}
+
+	// iterate studentGrades map to test 
+	for (auto const& instructor : instructors) {
+		std::cout << "inside instructor" << '\n';
+		for (auto const& report : instructor.reports) {
+			std::cout << "inside report" << '\n';
+			for (auto const& student : report.studentGrades) {
+    std::cout << student.first << ':' 
+              << student.second 
+              << std::endl;
+				}
+		}
+	}
+
+
 }
 
