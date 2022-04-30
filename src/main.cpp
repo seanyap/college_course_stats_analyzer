@@ -105,6 +105,8 @@ int main() {
 	std::vector <Instructor> instructors;
 
 	// place below code into a reader wrapper
+	// ignore heading 
+	data_1115.ignore(1000, '\n') ;
 	while (data_1115.good()) {
 		// get one record
 		std::string record;
@@ -144,11 +146,11 @@ int main() {
 			
 			// check if current student course exist in instructor
 			if (hasCourse(instructor.reports, courseID)) {
-				
+				//std::cout << "instructor has course" << '\n';
 			}
 			// course doesn't exist, so has to create it
 			else {
-				
+				//std::cout << "instructor doesn't course" << '\n';
 			}
 		}
 
@@ -164,9 +166,9 @@ int main() {
 
 	// iterate studentGrades map to test 
 	for (auto const& instructor : instructors) {
-		std::cout << "inside instructor" << '\n';
+		std::cout << "inside instructor: " << instructor.id << '\n';
 		for (auto const& report : instructor.reports) {
-			std::cout << "inside report" << '\n';
+			std::cout << "inside report: " << report.course.id << '\n';
 			for (auto const& student : report.studentGrades) {
     std::cout << student.first << ':' 
               << student.second 
