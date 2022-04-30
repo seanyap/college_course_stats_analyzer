@@ -4,6 +4,11 @@
 #include <vector>
 #include <sstream>
 
+// for iterating map in old ways/ before c++11
+// #include <iterator>
+#include <map>
+
+
 // 1. Pass rate per instructor (and per course number)
 // 2. W rate per instructor (and per course number)
 
@@ -42,24 +47,26 @@ struct Course {
 	Course(std::string term, std::string section) : term(term), section(section) {}
 };
 
-struct Student {
-	std::string id;
-	Student(std::string id) : id(id) {}
-};
+// omit Student struct for now because we only has 1 field
+// struct Student {
+// 	std::string id;
+// 	Student(std::string id) : id(id) {}
+// };
 
 // to represent the relationship between course and list of students and their grades
-struct Roster {
+struct Report {
 	Course course;
-	// std::vector <std::vector <Student, std::string> > studentsWithGrades;
+	// mapping each student to their grade
+	std::map <std::string, std::string> studentGrades; 
 
-	Roster() {}
-	Roster(Course course) : course(course) {}
+	Report() {}
+	Report(Course course) : course(course) {}
 };
 
 struct Instructor {
 	std::string id;
-	// each roster represents a course instructor taught 
-	std::vector <Roster> rosters;
+	// each resport represents a course instructor taught 
+	std::vector <Report> reports;
 	
 	Instructor() {}
 	Instructor(std::string id) : id(id) {}
@@ -97,25 +104,32 @@ int main() {
 		// split record into respective cols 
 		std::vector <std::string> cols (split(record, ','));
 		// check if cols are parsed correctly
-		// for (const auto &str : cols) {
+		// for (const auto &str : cols)
 		// 	std::cout << str << '\n';
-		// }
 
 		// if current instructor don't exist 
 		if (!hasInstructor(cols.at(2), instructors)) {
 			// create instructor
 			Instructor instructor (cols.at(2));
 			instructors.push_back(instructor);
-			std::cout << "instructor created: " << cols.at(2) << '\n';
-			// todo create roster
+
+			// initialize student, course and report
+			std::string studentID (cols.at(1));
+			Course course (cols.at(3), cols.at(4));
+			Report report (course);
+
+			// add current student grade into report
+				report.studentGrades.insert(std::pair<std::string,std::string>(studentID, cols.at(5)));
+			// assign report to instructor
+			instructor.reports.push_back(report);
+			
+			// std::cout << "instructor created: " << instructor.id << '\n';
+
 		}
 		// current instructor exist
 		else {
 			std::cout << "instructor exists: " << cols.at(2) << '\n';
 		}
-
-		Student student (cols.at(0));
-		Course course (cols.at(3), cols.at(4));
 
 		// create rosters & instructors
 
