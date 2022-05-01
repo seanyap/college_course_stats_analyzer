@@ -10,6 +10,8 @@
 // #include <iterator>
 #include <map>
 
+#include <cstdio> // for printf
+
 
 // 1. Pass rate per instructor (and per course number)
 // 2. W rate per instructor (and per course number)
@@ -185,17 +187,44 @@ int main() {
 	//	Steps: iterate over all instructors, for each instructor, 
 	//		find the count of students who pass divided by the total 
 	//		number of students current instructor taught
+	//	Task 3 - W rate per instructor 
+	//	Steps: Similar to task 1. for each instructor, 
+	//		find the count of students who got a W divided by
+	//		the total number of students current instructor taught
+	std::printf("|----------------------------------------|\n");
+	std::printf("| Instructor | Pass Rate | Withdraw Rate |\n");
+	std::printf("|----------------------------------------|\n");
+	for (int i=0; i<instructors.size(); ++i) {
+		int passedStudentCount = 0;
+		int withdrawStudentCount = 0;
+		int totalStudentCount = 0;
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			for (std::pair<std::string, std::string> student : instructors[i].reports[j].studentGrades) {
+		        // accessing current student grade from map
+		        std::string grade = student.second;
+				if (grade == "A+" || grade == "A" || grade == "A-" ||
+					grade == "B+" || grade == "B" || grade == "B-" ||
+					grade == "C+" || grade == "C" || grade == "C-") 
+					passedStudentCount++;
+				else if (grade == "W") 
+					withdrawStudentCount++;
+				totalStudentCount++;
+			}
+		}	
+		// calculate metrics for pass and withdraw rate for current instructor
+		double passRate = (double)passedStudentCount / (double)totalStudentCount; 
+		double withdrawRate = (double)withdrawStudentCount / (double)totalStudentCount;
+
+		std::printf("|    %s     ", instructors[i].id.c_str());
+		std::printf("|   %.3f   ", passRate);
+		std::printf("|     %.3f     |\n", withdrawRate);
+	}
+	std::printf("|----------------------------------------|\n");
 	
 	
 	//	Task 2 - pass rate per course number
 	//	Steps: find the count of students who pass divided by the 
 	//		total number of students (all instructors combined)
-	
-	
-	//	Task 3 - W rate per instructor 
-	//	Steps: Similar to task 1. for each instructor, 
-	//		find the count of students who got a W divided by
-	//		the total number of students current instructor taught
 
 	// 	Task 4 - W rate per course number
 	//	Steps: Similar to task 2, but find the count of students who
@@ -212,22 +241,22 @@ int main() {
 	// iterate studentGrades map to test 
 		// for (auto const& instructor : instructors) 	
 	// input csv file is ordered by TermID
-	int count = 0;
-	for (int i=0; i<instructors.size(); ++i) {
-		std::cout << "instructor: " << instructors[i].id << '\n';
-		std::cout << "report size: " << instructors[i].reports.size() << '\n';
-		for (int j=0; j<instructors[i].reports.size(); ++j) {
-			std::map<std::string, std::string>::iterator it = instructors[i].reports[j].studentGrades.begin();
-			for (std::pair<std::string, std::string> element : instructors[i].reports[j].studentGrades) {
-		        // Accessing KEY from element
-		        std::string student = element.first;
-		        // Accessing VALUE from element.
-		        std::string grade = element.second;
-		        std::cout << student << " :: " << grade << std::endl;
-				count++;
-			}
-		}
-	}
-	std::cout << count << '\n';
+	// int count = 0;
+	// for (int i=0; i<instructors.size(); ++i) {
+	// 	std::cout << "instructor: " << instructors[i].id << '\n';
+	// 	std::cout << "report size: " << instructors[i].reports.size() << '\n';
+	// 	for (int j=0; j<instructors[i].reports.size(); ++j) {
+	// 		std::map<std::string, std::string>::iterator it = instructors[i].reports[j].studentGrades.begin();
+	// 		for (std::pair<std::string, std::string> element : instructors[i].reports[j].studentGrades) {
+	// 	        // Accessing KEY from element
+	// 	        std::string student = element.first;
+	// 	        // Accessing VALUE from element.
+	// 	        std::string grade = element.second;
+	// 	        std::cout << student << " :: " << grade << std::endl;
+	// 			count++;
+	// 		}
+	// 	}
+	// }
+	// std::cout << count << '\n';
 }
 
