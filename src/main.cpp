@@ -10,6 +10,8 @@
 // #include <iterator>
 #include <map>
 
+#include <cstdio> // for printf
+
 
 // 1. Pass rate per instructor (and per course number)
 // 2. W rate per instructor (and per course number)
@@ -101,7 +103,7 @@ int findCourse(std::vector <Report> &reports, std::string courseID, std::string 
 }
 
 int main() {
-	std::ifstream data_1115 ("../data/1115.csv");
+	std::ifstream data_1115 ("./data/1115.csv");
 
 	std::vector <Instructor> instructors;
 
@@ -178,25 +180,173 @@ int main() {
 		
 	}
 
+	// repeat above for 3115 and 3130
+
+	// process data in memory to complete assignment tasks
+	//	Task 1 - pass rate per instructor 
+	//	Steps: iterate over all instructors, for each instructor, 
+	//		find the count of students who pass divided by the total 
+	//		number of students current instructor taught
+	//	Task 3 - W rate per instructor 
+	//	Steps: Similar to task 1. for each instructor, 
+	//		find the count of students who got a W divided by
+	//		the total number of students current instructor taught
+	std::printf("|----------------------------------------|\n");
+	std::printf("| Instructor | Pass Rate | Withdraw Rate |\n");
+	std::printf("|----------------------------------------|\n");
+	for (int i=0; i<instructors.size(); ++i) {
+		int passedStudentCount = 0;
+		int withdrawStudentCount = 0;
+		int totalStudentCount = 0;
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			for (std::pair<std::string, std::string> student : instructors[i].reports[j].studentGrades) {
+		        // accessing current student grade from map
+		        std::string grade = student.second;
+				if (grade == "A+" || grade == "A" || grade == "A-" ||
+					grade == "B+" || grade == "B" || grade == "B-" ||
+					grade == "C+" || grade == "C" || grade == "C-") 
+					passedStudentCount++;
+				else if (grade == "W") 
+					withdrawStudentCount++;
+				totalStudentCount++;
+			}
+		}	
+		// calculate metrics for pass and withdraw rate for current instructor
+		double passRate = (double)passedStudentCount / (double)totalStudentCount; 
+		double withdrawRate = (double)withdrawStudentCount / (double)totalStudentCount;
+
+		std::printf("|    %s     ", instructors[i].id.c_str());
+		std::printf("|   %.3f   ", passRate);
+		std::printf("|     %.3f     |\n", withdrawRate);
+	}
+	std::printf("|----------------------------------------|\n");
+	
+	
+	//	Task 2 - pass rate per course number
+	//	Steps: find the count of students who pass divided by the 
+	//		total number of students (all instructors combined)
+	// 	Task 4 - W rate per course number
+	//	Steps: Similar to task 2, but find the count of students who
+	//		got a W instead of who pass
+	std::printf("|------------------------------------|\n");
+	std::printf("| Course | Pass Rate | Withdraw Rate |\n");
+	std::printf("|------------------------------------|\n");
+	
+	int passedStudentCount = 0;
+	int withdrawStudentCount = 0;
+	int totalStudentCount = 0;
+	for (int i=0; i<instructors.size(); ++i) {
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			for (std::pair<std::string, std::string> student : instructors[i].reports[j].studentGrades) {
+		        // accessing current student grade from map
+		        std::string grade = student.second;
+				if (grade == "A+" || grade == "A" || grade == "A-" ||
+					grade == "B+" || grade == "B" || grade == "B-" ||
+					grade == "C+" || grade == "C" || grade == "C-") 
+					passedStudentCount++;
+				else if (grade == "W") 
+					withdrawStudentCount++;
+				totalStudentCount++;
+			}
+		}	
+	}
+	// calculate metrics for pass and withdraw rate for current course
+	double passRate = (double)passedStudentCount / (double)totalStudentCount; 
+	double withdrawRate = (double)withdrawStudentCount / (double)totalStudentCount;
+
+	// insert 1115 for now, will have to change later when adding 3115 & 3130
+	std::printf("|  %s  ", "1115"); 
+	std::printf("|   %.3f   ", passRate);
+	std::printf("|     %.3f     |\n", withdrawRate);
+	std::printf("|------------------------------------|\n");
+	
+
+	//	Task 5 - Fall vs Spring pass rate for each course 
+	//	Steps: create 4 variables: 2 variables for the count of students
+	//		in the Fall & Spring who passed and 2 variables for the count
+	//		of total students in the Fall & Spring. Then, divide the 
+	//		respective semester count of students who pass by the total
+	//		number of students in that semester
+	std::printf("|----------------------------------------------|\n");
+	std::printf("| Course | Fall P / W Rate | Spring P / W Rate |\n");
+	std::printf("|----------------------------------------------|\n");
+
+	int passedStudentCountFall = 0;
+	int withdrawStudentCountFall = 0;
+	int totalStudentCountFall = 0;
+	
+	int passedStudentCountSpring = 0;
+	int withdrawStudentCountSpring = 0;
+	int totalStudentCountSpring = 0;
+	
+	for (int i=0; i<instructors.size(); ++i) {
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			bool isFallCourse = false;
+			std::string term = instructors[i].reports[j].course.term;
+			// check if current report is for Spring or Fall 
+			if (term == "T04" || term == "T08" || term == "T12" ||
+				term == "T16" || term == "T20" || term == "T23")
+				isFallCourse = true;
+			
+			for (std::pair<std::string, std::string> student : instructors[i].reports[j].studentGrades) {
+		        // accessing current student grade from map
+		        std::string grade = student.second;
+				if (grade == "A+" || grade == "A" || grade == "A-" ||
+					grade == "B+" || grade == "B" || grade == "B-" ||
+					grade == "C+" || grade == "C" || grade == "C-") {
+					if (isFallCourse) 
+						passedStudentCountFall++;
+					else
+						passedStudentCountSpring++;
+				}
+				else if (grade == "W") {
+					if (isFallCourse)
+						withdrawStudentCountFall++;
+					else 
+						withdrawStudentCountSpring++;
+				}
+				if (isFallCourse) 
+					totalStudentCountFall++;
+				else 
+					totalStudentCountSpring++;
+			}
+		}	
+	}
+	// calculate metrics for pass and withdraw rate for fall vs spring course
+	double passRateFall = (double)passedStudentCountFall / (double)totalStudentCountFall; 
+	double withdrawRateFall = (double)withdrawStudentCountFall / (double)totalStudentCountFall;
+
+	double passRateSpring = (double)passedStudentCountSpring / (double)totalStudentCountSpring; 
+	double withdrawRateSpring = (double)withdrawStudentCountSpring / (double)totalStudentCountSpring;
+
+	// insert 1115 for now, will have to change later when adding 3115 & 3130
+	std::printf("|  %s  ", "1115"); 
+	std::printf("|  %.3f ", passRateFall);
+	std::printf("/ %.3f  ", withdrawRateFall);
+	std::printf("|   %.3f ", passRateSpring);
+	std::printf("/ %.3f   |\n", withdrawRateSpring);
+	std::printf("|----------------------------------------------|\n");
+	
+
 	// iterate studentGrades map to test 
 		// for (auto const& instructor : instructors) 	
 	// input csv file is ordered by TermID
-	int count = 0;
-	for (int i=0; i<instructors.size(); ++i) {
-		std::cout << "instructor: " << instructors[i].id << '\n';
-		std::cout << "report size: " << instructors[i].reports.size() << '\n';
-		for (int j=0; j<instructors[i].reports.size(); ++j) {
-			std::map<std::string, std::string>::iterator it = instructors[i].reports[j].studentGrades.begin();
-			for (std::pair<std::string, std::string> element : instructors[i].reports[j].studentGrades) {
-		        // Accessing KEY from element
-		        std::string student = element.first;
-		        // Accessing VALUE from element.
-		        std::string grade = element.second;
-		        std::cout << student << " :: " << grade << std::endl;
-				count++;
-			}
-		}
-	}
-	std::cout << count << '\n';
+	// int count = 0;
+	// for (int i=0; i<instructors.size(); ++i) {
+	// 	std::cout << "instructor: " << instructors[i].id << '\n';
+	// 	std::cout << "report size: " << instructors[i].reports.size() << '\n';
+	// 	for (int j=0; j<instructors[i].reports.size(); ++j) {
+	// 		std::map<std::string, std::string>::iterator it = instructors[i].reports[j].studentGrades.begin();
+	// 		for (std::pair<std::string, std::string> element : instructors[i].reports[j].studentGrades) {
+	// 	        // Accessing KEY from element
+	// 	        std::string student = element.first;
+	// 	        // Accessing VALUE from element.
+	// 	        std::string grade = element.second;
+	// 	        std::cout << student << " :: " << grade << std::endl;
+	// 			count++;
+	// 		}
+	// 	}
+	// }
+	// std::cout << count << '\n';
 }
 
