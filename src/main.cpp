@@ -267,6 +267,65 @@ int main() {
 	//		of total students in the Fall & Spring. Then, divide the 
 	//		respective semester count of students who pass by the total
 	//		number of students in that semester
+	std::printf("|----------------------------------------------|\n");
+	std::printf("| Course | Fall P / W Rate | Spring P / W Rate |\n");
+	std::printf("|----------------------------------------------|\n");
+
+	int passedStudentCountFall = 0;
+	int withdrawStudentCountFall = 0;
+	int totalStudentCountFall = 0;
+	
+	int passedStudentCountSpring = 0;
+	int withdrawStudentCountSpring = 0;
+	int totalStudentCountSpring = 0;
+	
+	for (int i=0; i<instructors.size(); ++i) {
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			bool isFallCourse = false;
+			std::string term = instructors[i].reports[j].course.term;
+			// check if current report is for Spring or Fall 
+			if (term == "T04" || term == "T08" || term == "T12" ||
+				term == "T16" || term == "T20" || term == "T23")
+				isFallCourse = true;
+			
+			for (std::pair<std::string, std::string> student : instructors[i].reports[j].studentGrades) {
+		        // accessing current student grade from map
+		        std::string grade = student.second;
+				if (grade == "A+" || grade == "A" || grade == "A-" ||
+					grade == "B+" || grade == "B" || grade == "B-" ||
+					grade == "C+" || grade == "C" || grade == "C-") {
+					if (isFallCourse) 
+						passedStudentCountFall++;
+					else
+						passedStudentCountSpring++;
+				}
+				else if (grade == "W") {
+					if (isFallCourse)
+						withdrawStudentCountFall++;
+					else 
+						withdrawStudentCountSpring++;
+				}
+				if (isFallCourse) 
+					totalStudentCountFall++;
+				else 
+					totalStudentCountSpring++;
+			}
+		}	
+	}
+	// calculate metrics for pass and withdraw rate for fall vs spring course
+	double passRateFall = (double)passedStudentCountFall / (double)totalStudentCountFall; 
+	double withdrawRateFall = (double)withdrawStudentCountFall / (double)totalStudentCountFall;
+
+	double passRateSpring = (double)passedStudentCountSpring / (double)totalStudentCountSpring; 
+	double withdrawRateSpring = (double)withdrawStudentCountSpring / (double)totalStudentCountSpring;
+
+	// insert 1115 for now, will have to change later when adding 3115 & 3130
+	std::printf("|  %s  ", "1115"); 
+	std::printf("|  %.3f ", passRateFall);
+	std::printf("/ %.3f  ", withdrawRateFall);
+	std::printf("|   %.3f ", passRateSpring);
+	std::printf("/ %.3f   |\n", withdrawRateSpring);
+	std::printf("|----------------------------------------------|\n");
 	
 
 	// iterate studentGrades map to test 
