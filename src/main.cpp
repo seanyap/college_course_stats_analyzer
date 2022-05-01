@@ -225,10 +225,41 @@ int main() {
 	//	Task 2 - pass rate per course number
 	//	Steps: find the count of students who pass divided by the 
 	//		total number of students (all instructors combined)
-
 	// 	Task 4 - W rate per course number
 	//	Steps: Similar to task 2, but find the count of students who
 	//		got a W instead of who pass
+	std::printf("|------------------------------------|\n");
+	std::printf("| Course | Pass Rate | Withdraw Rate |\n");
+	std::printf("|------------------------------------|\n");
+	
+	int passedStudentCount = 0;
+	int withdrawStudentCount = 0;
+	int totalStudentCount = 0;
+	for (int i=0; i<instructors.size(); ++i) {
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			for (std::pair<std::string, std::string> student : instructors[i].reports[j].studentGrades) {
+		        // accessing current student grade from map
+		        std::string grade = student.second;
+				if (grade == "A+" || grade == "A" || grade == "A-" ||
+					grade == "B+" || grade == "B" || grade == "B-" ||
+					grade == "C+" || grade == "C" || grade == "C-") 
+					passedStudentCount++;
+				else if (grade == "W") 
+					withdrawStudentCount++;
+				totalStudentCount++;
+			}
+		}	
+	}
+	// calculate metrics for pass and withdraw rate for current course
+	double passRate = (double)passedStudentCount / (double)totalStudentCount; 
+	double withdrawRate = (double)withdrawStudentCount / (double)totalStudentCount;
+
+	// insert 1115 for now, will have to change later when adding 3115 & 3130
+	std::printf("|  %s  ", "1115"); 
+	std::printf("|   %.3f   ", passRate);
+	std::printf("|     %.3f     |\n", withdrawRate);
+	std::printf("|------------------------------------|\n");
+	
 
 	//	Task 5 - Fall vs Spring pass rate for each course 
 	//	Steps: create 4 variables: 2 variables for the count of students
