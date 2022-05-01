@@ -103,7 +103,7 @@ int findCourse(std::vector <Report> &reports, std::string courseID, std::string 
 }
 
 int main() {
-	std::ifstream data_1115 ("../data/1115.csv");
+	std::ifstream data_1115 ("./data/1115.csv");
 
 	std::vector <Instructor> instructors;
 
