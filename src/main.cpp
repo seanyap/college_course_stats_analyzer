@@ -4,6 +4,8 @@
 #include <vector>
 #include <sstream>
 
+#include <iterator>
+
 // for iterating map in old ways/ before c++11
 // #include <iterator>
 #include <map>
@@ -91,12 +93,11 @@ int findInstructor(std::string target, std::vector <Instructor> &instructors) {
 	return -1;
 }
 
-bool hasCourse(std::vector <Report> reports, std::string courseID) {
-	for (auto const& report : reports) {
-		if (report.course.id == courseID)
-			return true;
+int findCourse(std::vector <Report> &reports, std::string courseID, std::string termID, std::string sectionID) {
+	for (int i=0; i<reports.size(); ++i) {
+		if (reports[i].course.id == courseID && reports[i].course.term == termID && reports[i].course.section == sectionID) return i;
 	}
-	return false;
+	return -1;
 }
 
 int main() {
@@ -109,11 +110,11 @@ int main() {
 	data_1115.ignore(1000, '\n') ;
 	while (data_1115.good()) {
 		// get one record
-		std::string record;
-		std::getline(data_1115, record); 
+		std::string row;
+		std::getline(data_1115, row); 
 		
 		// split record into respective cols 
-		std::vector <std::string> cols (split(record, ','));
+		std::vector <std::string> cols (split(row, ','));
 		std::string studentID (cols.at(0));	
 		std::string courseID (cols.at(1));
 		std::string instructorID (cols.at(2));
@@ -128,29 +129,42 @@ int main() {
 			// create instructor
 			Instructor instructor (instructorID);
 
-			// initialize student, course and report
-			
+			// instantiate course and report
 			Course course (courseID, termID, sectionID);
 			Report report (course);
 
 			// add current student grade into report
-				report.studentGrades.insert(std::pair<std::string,std::string>(studentID, studentGrade));
+			report.studentGrades.insert({studentID, studentGrade});
 			// assign report to instructor
 			instructor.reports.push_back(report);
 			instructors.push_back(instructor);
 		}
 		// current instructor exist
 		else {
-			// get instructor from memory
-			Instructor instructor = instructors.at(instructorIdx);
+			// get instructor from memory (make sure its referenced to the same object)
+			Instructor &instructor = instructors.at(instructorIdx);
 			
 			// check if current student course exist in instructor
-			if (hasCourse(instructor.reports, courseID)) {
-				//std::cout << "instructor has course" << '\n';
+			int reportIdx = findCourse(instructor.reports, courseID, termID, sectionID);
+			// instructor doesn't have current course read in
+			if (reportIdx == -1) {
+				//std::cout << "creating course and report for instructor" << '\n';
+				// create a report & course
+				Course course (courseID, termID, sectionID);
+				Report report (course);
+
+				// add current student to report 
+				//std::cout << "NEW:before map size: " << report.studentGrades.size() << '\n';
+				report.studentGrades.insert({studentID, studentGrade});
+				//std::cout << "NEW:after map size: " << report.studentGrades.size() << '\n';
+				instructor.reports.push_back(report);
 			}
-			// course doesn't exist, so has to create it
+			// course exist, so just add student grade 
 			else {
-				//std::cout << "instructor doesn't course" << '\n';
+				//std::cout << "instructor has course, mapping student to grade" << '\n';
+				//std::cout << "EXIST:before map size: " << instructor.reports[reportIdx].studentGrades.size() << '\n';
+				instructor.reports[reportIdx].studentGrades.insert({studentID, studentGrade});
+				// std::cout << "EXIST:after map size: " << instructor.reports[reportIdx].studentGrades.size() << '\n';
 			}
 		}
 
@@ -165,18 +179,24 @@ int main() {
 	}
 
 	// iterate studentGrades map to test 
-	for (auto const& instructor : instructors) {
-		std::cout << "inside instructor: " << instructor.id << '\n';
-		for (auto const& report : instructor.reports) {
-			std::cout << "inside report: " << report.course.id << '\n';
-			for (auto const& student : report.studentGrades) {
-    std::cout << student.first << ':' 
-              << student.second 
-              << std::endl;
-				}
+		// for (auto const& instructor : instructors) 	
+	// input csv file is ordered by TermID
+	int count = 0;
+	for (int i=0; i<instructors.size(); ++i) {
+		std::cout << "instructor: " << instructors[i].id << '\n';
+		std::cout << "report size: " << instructors[i].reports.size() << '\n';
+		for (int j=0; j<instructors[i].reports.size(); ++j) {
+			std::map<std::string, std::string>::iterator it = instructors[i].reports[j].studentGrades.begin();
+			for (std::pair<std::string, std::string> element : instructors[i].reports[j].studentGrades) {
+		        // Accessing KEY from element
+		        std::string student = element.first;
+		        // Accessing VALUE from element.
+		        std::string grade = element.second;
+		        std::cout << student << " :: " << grade << std::endl;
+				count++;
+			}
 		}
 	}
-
-
+	std::cout << count << '\n';
 }
 
