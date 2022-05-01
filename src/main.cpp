@@ -178,6 +178,37 @@ int main() {
 		
 	}
 
+	// repeat above for 3115 and 3130
+
+	// process data in memory to complete assignment tasks
+	//	Task 1 - pass rate per instructor 
+	//	Steps: iterate over all instructors, for each instructor, 
+	//		find the count of students who pass divided by the total 
+	//		number of students current instructor taught
+	
+	
+	//	Task 2 - pass rate per course number
+	//	Steps: find the count of students who pass divided by the 
+	//		total number of students (all instructors combined)
+	
+	
+	//	Task 3 - W rate per instructor 
+	//	Steps: Similar to task 1. for each instructor, 
+	//		find the count of students who got a W divided by
+	//		the total number of students current instructor taught
+
+	// 	Task 4 - W rate per course number
+	//	Steps: Similar to task 2, but find the count of students who
+	//		got a W instead of who pass
+
+	//	Task 5 - Fall vs Spring pass rate for each course 
+	//	Steps: create 4 variables: 2 variables for the count of students
+	//		in the Fall & Spring who passed and 2 variables for the count
+	//		of total students in the Fall & Spring. Then, divide the 
+	//		respective semester count of students who pass by the total
+	//		number of students in that semester
+	
+
 	// iterate studentGrades map to test 
 		// for (auto const& instructor : instructors) 	
 	// input csv file is ordered by TermID
