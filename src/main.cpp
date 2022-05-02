@@ -102,18 +102,14 @@ int findCourse(std::vector <Report> &reports, std::string courseID, std::string 
 	return -1;
 }
 
-int main() {
-	std::ifstream data_1115 ("./data/1115.csv");
-
-	std::vector <Instructor> instructors;
-
-	// place below code into a reader wrapper
+void readCSV(std::vector <Instructor> &instructors, std::string filepath) {
+	std::ifstream data (filepath);
+	
 	// ignore heading 
-	data_1115.ignore(1000, '\n') ;
-	while (data_1115.good()) {
-		// get one record
+	data.ignore(1000, '\n') ;
+	while (data.good()) {
 		std::string row;
-		std::getline(data_1115, row); 
+		std::getline(data, row); // get one row
 		
 		// split record into respective cols 
 		std::vector <std::string> cols (split(row, ','));
@@ -150,35 +146,27 @@ int main() {
 			int reportIdx = findCourse(instructor.reports, courseID, termID, sectionID);
 			// instructor doesn't have current course read in
 			if (reportIdx == -1) {
-				//std::cout << "creating course and report for instructor" << '\n';
+				
 				// create a report & course
 				Course course (courseID, termID, sectionID);
 				Report report (course);
 
 				// add current student to report 
-				//std::cout << "NEW:before map size: " << report.studentGrades.size() << '\n';
 				report.studentGrades.insert({studentID, studentGrade});
-				//std::cout << "NEW:after map size: " << report.studentGrades.size() << '\n';
 				instructor.reports.push_back(report);
 			}
 			// course exist, so just add student grade 
-			else {
-				//std::cout << "instructor has course, mapping student to grade" << '\n';
-				//std::cout << "EXIST:before map size: " << instructor.reports[reportIdx].studentGrades.size() << '\n';
-				instructor.reports[reportIdx].studentGrades.insert({studentID, studentGrade});
-				// std::cout << "EXIST:after map size: " << instructor.reports[reportIdx].studentGrades.size() << '\n';
+			else {			instructor.reports[reportIdx].studentGrades.insert({studentID, studentGrade});
 			}
 		}
-
-
-		
-
-		
-		// who's responsible to keep track of struct objects? main?
-		// --> main keeps track of the list of instructors which
-		//		will connect to all the other objects 
-		
 	}
+}
+
+int main() {
+	std::vector <Instructor> instructors;
+
+	// read and instantiate structs in memory
+	readCSV(instructors, "./data/1115.csv");
 
 	// repeat above for 3115 and 3130
 
