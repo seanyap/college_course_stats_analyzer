@@ -2,7 +2,7 @@
 
 College Course Stats Analyzer is a C++ program to process CSV data files to extract insights from college courses and the instructors who taught those courses.
 
-Insights extracted include:
+#### Insights extracted include:
 
 - Pass rate for each instructor & course
 - Withdraw rate for each instructor & course
@@ -11,12 +11,12 @@ Insights extracted include:
 #### Process Flow
 
 1. read in data from file into memory
-   a. parse each record into cols
-   b. extract respective cols to instantiate structs in memory
+   * parse each record into cols
+   * extract respective cols to instantiate structs in memory
 2. perform the required insights
-   a. utilize the data stored and structured by structs to process analysis
+   * utilize the data stored and structured by structs to process analysis
 3. write the insights into an output file
-   a. use printf to format and output nicely
+   * use printf to format and output nicely
 
 #### Data structure motivation
 
