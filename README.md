@@ -8,7 +8,7 @@ Insights extracted include:
 - Withdraw rate for each instructor & course
 - Fall vs Spring Pass & Withdraw rate for each course
 
-####Process Flow
+#### Process Flow
 
 1. read in data from file into memory
    a. parse each record into cols
