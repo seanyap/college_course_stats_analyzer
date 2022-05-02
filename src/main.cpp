@@ -165,10 +165,10 @@ void readCSV(std::vector <Instructor> &instructors, std::string filepath) {
 int main() {
 	std::vector <Instructor> instructors;
 
-	// read and instantiate structs in memory
+	// read 3 CSV files and instantiate structs in memory
 	readCSV(instructors, "./data/1115.csv");
-
-	// repeat above for 3115 and 3130
+	readCSV(instructors, "./data/3115.csv");
+	readCSV(instructors, "./data/3135.csv");
 
 	// process data in memory to complete assignment tasks
 	//	Task 1 - pass rate per instructor 
